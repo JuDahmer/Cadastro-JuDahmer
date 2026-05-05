@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ju Dahmer Ateliê | Painel Administrativo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@200;300;400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --verde-institucional: #879670;
+            --fundo-site: #FAF9F6;
+            --texto-principal: #2C3E2D;
+            --texto-secundario: #7A7A7A;
+            --detalhe-dourado: #D4AF37;
+            --vermelho-alerta: #d9534f;
+            --azul-edicao: #4A90E2;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--fundo-site);
+            color: var(--texto-principal);
+            font-family: 'Montserrat', sans-serif;
+            padding: 20px;
+        }
+
+        .main-wrapper {
+            max-width: 600px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .admin-card {
+            background: white;
+            padding: 30px 20px;
+            border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+            border: 1px solid rgba(0,0,0,0.02);
+        }
+
+        .header-admin { text-align: center; margin-bottom: 25px; }
+        .header-admin h1 { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: var(--verde-institucional); font-weight: 400; }
+        .divisor { width: 40px; height: 1px; background-color: var(--detalhe-dourado); margin: 10px auto; }
+
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--texto-secundario); margin-bottom: 5px; font-weight: 500; }
+        input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-family: 'Montserrat', sans-serif; font-size: 1rem; color: var(--texto-principal); }
+        input:focus { outline: none; border-color: var(--verde-institucional); }
+        
+        .btn { width: 100%; color: white; border: none; padding: 15px; font-size: 0.9rem; letter-spacing: 1px; text-transform: uppercase; border-radius: 4px; cursor: pointer; transition: all 0.3s ease; font-weight: 500; margin-top: 10px; }
+        .btn-submit { background-color: var(--verde-institucional); }
+        .btn-submit:hover { background-color: #6d7a59; }
+        .btn-cancelar { background-color: var(--texto-secundario); display: none; margin-top: 10px;}
+        .btn-cancelar:hover { background-color: #555; }
+        .btn:disabled { background-color: #ccc; cursor: not-allowed; }
+
+        .preview-box { display: none; text-align: center; margin-top: 15px; padding: 15px; background-color: #f8f8f8; border: 1px dashed #ccc; border-radius: 8px; }
+        .preview-box.visible { display: block; }
+        .preview-box img { max-width: 100px; border-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 10px;}
+        
+        #feedback { margin-top: 15px; text-align: center; font-size: 0.85rem; display: none; padding: 10px; border-radius: 4px; }
+
+        /* LISTA DE PRODUTOS */
+        .produto-item { display: flex; align-items: center; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #eee; gap: 10px;}
+        .produto-item:last-child { border-bottom: none; }
+        .produto-info { display: flex; align-items: center; gap: 15px; flex: 1;}
+        .produto-info img { width: 50px; height: 50px; object-fit: cover; border-radius: 4px; border: 1px solid #eee;}
+        .produto-texto h3 { font-size: 1rem; font-weight: 500; margin-bottom: 2px;}
+        .produto-texto p { font-size: 0.85rem; color: var(--texto-secundario); }
+        
+        .acoes { display: flex; gap: 8px; }
+        .btn-acao { border: none; padding: 8px 12px; border-radius: 4px; color: white; cursor: pointer; font-size: 0.8rem; font-weight: 500; transition: all 0.2s;}
+        .btn-editar { background-color: var(--azul-edicao); }
+        .btn-excluir { background-color: var(--vermelho-alerta); }
+        
+        /* Ajustes para Celulares Pequenos */
+        @media (max-width: 480px) {
+            .produto-item { flex-direction: column; align-items: flex-start; }
+            .acoes { width: 100%; margin-top: 10px; }
+            .btn-acao { flex: 1; text-align: center; padding: 12px; } /* Botões maiores para toque */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-wrapper">
+        <!-- FORMULÁRIO DE CADASTRO/EDIÇÃO -->
+        <div class="admin-card">
+            <div class="header-admin">
+                <h1 id="tituloForm">Cadastrar Produto</h1>
+                <div class="divisor"></div>
+            </div>
+
+            <form id="formCadastro">
+                <div class="form-group">
+                    <label>Nome do Produto</label>
+                    <input type="text" id="nomeProduto" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Preço</label>
+                    <input type="text" id="precoProduto" placeholder="Ex: R$ 87,00" required>
+                </div>
+
+                <div class="form-group">
+                    <label id="labelImagem">Foto do Produto</label>
+                    <input type="file" id="imagemProduto" accept="image/*">
+                </div>
+
+                <div class="preview-box" id="previewContainer">
+                    <img id="previewImg" src="">
+                    <p style="font-size: 0.75rem; color: var(--texto-secundario);" id="txtFinal"></p>
+                </div>
+
+                <button type="submit" class="btn btn-submit" id="btnSubmit">Salvar no Catálogo</button>
+                <button type="button" class="btn btn-cancelar" id="btnCancelar">Cancelar Edição</button>
+                <div id="feedback"></div>
+            </form>
+        </div>
+
+        <!-- LISTAGEM DE PRODUTOS PARA EDIÇÃO/EXCLUSÃO -->
+        <div class="admin-card">
+            <div class="header-admin">
+                <h1>Produtos Cadastrados</h1>
+                <div class="divisor"></div>
+            </div>
+            <div id="listaProdutos">
+                <p style="text-align: center; color: var(--texto-secundario); font-size: 0.9rem;">Carregando...</p>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAA-4XzE079j_fE86vYz8Fy5m9CaOfuxLo",
+            authDomain: "ju-dahmer-atelie.firebaseapp.com",
+            projectId: "ju-dahmer-atelie",
+            storageBucket: "ju-dahmer-atelie.firebasestorage.app",
+            messagingSenderId: "1041012492925",
+            appId: "1:1041012492925:web:776f980a6e4814d141ff14"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Variáveis de Controle de Estado
+        let imgBase64 = "";
+        let idProdutoEmEdicao = null; 
+
+        // Elementos da Tela
+        const form = document.getElementById('formCadastro');
+        const inputNome = document.getElementById('nomeProduto');
+        const inputPreco = document.getElementById('precoProduto');
+        const inputImagem = document.getElementById('imagemProduto');
+        const btnSubmit = document.getElementById('btnSubmit');
+        const btnCancelar = document.getElementById('btnCancelar');
+        const previewContainer = document.getElementById('previewContainer');
+        const previewImg = document.getElementById('previewImg');
+        const txtFinal = document.getElementById('txtFinal');
+        const listaProdutosDiv = document.getElementById('listaProdutos');
+        const feedback = document.getElementById('feedback');
+
+        // COMPRESSÃO DA IMAGEM
+        inputImagem.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    let w = img.width, h = img.height;
+                    const max = 600;
+
+                    if (w > h && w > max) { h *= max / w; w = max; } 
+                    else if (h > max) { w *= max / h; h = max; }
+
+                    canvas.width = w; canvas.height = h;
+                    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+
+                    imgBase64 = canvas.toDataURL('image/jpeg', 0.7);
+                    
+                    previewContainer.classList.add('visible');
+                    previewImg.src = imgBase64;
+                    txtFinal.innerText = `Nova imagem pronta (${((imgBase64.length * 3 / 4) / 1024).toFixed(1)} KB)`;
+                }
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // SALVAR OU ATUALIZAR PRODUTO NO FIREBASE
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Validação: Se é cadastro novo, a foto é obrigatória
+            if(!idProdutoEmEdicao && !imgBase64) {
+                mostrarFeedback("Por favor, adicione uma foto.", false);
+                return;
+            }
+
+            btnSubmit.disabled = true;
+            btnSubmit.innerText = "Processando...";
+
+            try {
+                if (idProdutoEmEdicao) {
+                    // EDIÇÃO (UPDATE)
+                    const dadosAtualizados = {
+                        nome: inputNome.value,
+                        preco: inputPreco.value,
+                    };
+                    // Só atualiza a imagem no banco se o usuário escolheu uma nova
+                    if (imgBase64) { dadosAtualizados.imagem = imgBase64; }
+
+                    await updateDoc(doc(db, "catalogo", idProdutoEmEdicao), dadosAtualizados);
+                    mostrarFeedback("Produto atualizado com sucesso!", true);
+                    resetarFormulario();
+                } else {
+                    // NOVO CADASTRO (CREATE)
+                    await addDoc(collection(db, "catalogo"), {
+                        nome: inputNome.value,
+                        preco: inputPreco.value,
+                        imagem: imgBase64,
+                        dataCriacao: serverTimestamp()
+                    });
+                    mostrarFeedback("Produto cadastrado com sucesso!", true);
+                    resetarFormulario();
+                }
+                
+                // Recarrega a lista para mostrar a alteração
+                carregarListaProdutos();
+
+            } catch (error) {
+                mostrarFeedback("Erro de comunicação com o servidor.", false);
+            } finally {
+                btnSubmit.disabled = false;
+            }
+        });
+
+        // CARREGAR A LISTA NA TELA
+        async function carregarListaProdutos() {
+            try {
+                listaProdutosDiv.innerHTML = '<p style="text-align:center;">Atualizando lista...</p>';
+                const q = query(collection(db, "catalogo"), orderBy("dataCriacao", "desc"));
+                const querySnapshot = await getDocs(q);
+                
+                listaProdutosDiv.innerHTML = ""; // Limpa a div
+
+                if (querySnapshot.empty) {
+                    listaProdutosDiv.innerHTML = '<p style="text-align:center; font-size: 0.9rem;">Nenhum produto cadastrado.</p>';
+                    return;
+                }
+
+                querySnapshot.forEach((docSnap) => {
+                    const product = docSnap.data();
+                    const id = docSnap.id; // O ID gerado pelo Firebase
+
+                    // Cria o bloco do produto na lista
+                    const div = document.createElement('div');
+                    div.className = 'produto-item';
+                    div.innerHTML = `
+                        <div class="produto-info">
+                            <img src="${product.imagem}" alt="${product.nome}">
+                            <div class="produto-texto">
+                                <h3>${product.nome}</h3>
+                                <p>${product.preco}</p>
+                            </div>
+                        </div>
+                        <div class="acoes">
+                            <button class="btn-acao btn-editar" onclick="prepararEdicao('${id}', '${product.nome}', '${product.preco}', '${product.imagem}')">Editar</button>
+                            <button class="btn-acao btn-excluir" onclick="excluirProduto('${id}', '${product.nome}')">Apagar</button>
+                        </div>
+                    `;
+                    listaProdutosDiv.appendChild(div);
+                });
+            } catch (error) {
+                listaProdutosDiv.innerHTML = '<p style="text-align:center; color:red;">Erro ao carregar os produtos.</p>';
+            }
+        }
+
+        // FUNÇÕES GLOBAIS PARA OS BOTÕES ONCLICK
+        window.prepararEdicao = function(id, nome, preco, imagemSrc) {
+            idProdutoEmEdicao = id;
+            inputNome.value = nome;
+            inputPreco.value = preco;
+            
+            // Mostra a foto atual no preview
+            previewImg.src = imagemSrc;
+            previewContainer.classList.add('visible');
+            txtFinal.innerText = "Imagem atual do produto. Selecione outra caso queira trocar.";
+            
+            // Muda a interface para "Modo Edição"
+            document.getElementById('tituloForm').innerText = "Editando Produto";
+            btnSubmit.innerText = "Salvar Alterações";
+            btnCancelar.style.display = "block";
+            document.getElementById('labelImagem').innerText = "Foto do Produto (Opcional na edição)";
+            
+            // Rola a página para o topo (útil no celular)
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        window.excluirProduto = async function(id, nome) {
+            const confirmacao = confirm(`Tem certeza que deseja apagar o "${nome}"? Esta ação não pode ser desfeita.`);
+            if (confirmacao) {
+                try {
+                    await deleteDoc(doc(db, "catalogo", id));
+                    mostrarFeedback("Produto excluído.", true);
+                    
+                    // Se excluiu o produto que estava sendo editado, limpa o formulário
+                    if(id === idProdutoEmEdicao) resetarFormulario();
+                    
+                    carregarListaProdutos();
+                } catch (error) {
+                    mostrarFeedback("Erro ao excluir.", false);
+                }
+            }
+        };
+
+        // FUNÇÕES AUXILIARES
+        function resetarFormulario() {
+            form.reset();
+            idProdutoEmEdicao = null;
+            imgBase64 = "";
+            previewContainer.classList.remove('visible');
+            
+            document.getElementById('tituloForm').innerText = "Cadastrar Produto";
+            btnSubmit.innerText = "Salvar no Catálogo";
+            btnCancelar.style.display = "none";
+            document.getElementById('labelImagem').innerText = "Foto do Produto";
+        }
+
+        btnCancelar.addEventListener('click', resetarFormulario);
+
+        function mostrarFeedback(msg, sucesso) {
+            feedback.innerText = msg;
+            feedback.style.display = "block";
+            feedback.style.backgroundColor = sucesso ? "#eaf8ea" : "#ffeaea";
+            feedback.style.color = sucesso ? "#2C3E2D" : "#d9534f";
+            setTimeout(() => feedback.style.display = "none", 4000);
+        }
+
+        // Inicia carregando os produtos na tela
+        window.onload = carregarListaProdutos;
+    </script>
+</body>
+</html>
