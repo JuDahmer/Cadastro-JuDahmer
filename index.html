@@ -944,15 +944,130 @@
 
     btnCancelar.addEventListener('click', resetar);
 
-    // ── Feedback ──
+    // ── Feedback catálogo ──
     function mostrarFeedback(msg, ok) {
-        feedbackDiv.textContent  = msg;
-        feedbackDiv.className    = 'feedback ' + (ok ? 'sucesso' : 'erro');
+        feedbackDiv.textContent = msg;
+        feedbackDiv.className   = 'feedback ' + (ok ? 'sucesso' : 'erro');
         setTimeout(() => { feedbackDiv.className = 'feedback'; }, 4000);
     }
+
+    // ══════════════════════════════════════════════════════════
+    //  ABAS — trocar entre Catálogo e Sobre Mim
+    // ══════════════════════════════════════════════════════════
+    window.trocarAba = function(qual) {
+        // Atualiza visual das abas
+        document.querySelectorAll('.aba').forEach(a => {
+            a.classList.toggle('ativa', a.getAttribute('onclick').includes(qual));
+        });
+        // Mostra a seção certa, esconde as outras
+        document.querySelectorAll('.secao').forEach(s => {
+            s.classList.toggle('ativa', s.id === 'secao-' + qual);
+        });
+        // Carrega dados do Firebase ao abrir a aba Sobre
+        if (qual === 'sobre') carregarSobre();
+    };
+
+    // ══════════════════════════════════════════════════════════
+    //  SOBRE — carregar dados salvos do Firebase
+    // ══════════════════════════════════════════════════════════
+    async function carregarSobre() {
+        try {
+            const { getDoc } = await import("https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js");
+            const snap = await getDoc(doc(db, "configuracoes", "sobre"));
+            if (!snap.exists()) return;
+            const d = snap.data();
+
+            if (d.titulo) document.getElementById('sobreTitulo').value = d.titulo;
+            if (d.texto)  document.getElementById('sobreTexto').value  = d.texto;
+
+            if (d.foto) {
+                document.getElementById('sobrePreviewImg').src = d.foto;
+                document.getElementById('sobrePreviewInfo').textContent = 'Foto atual salva';
+                document.getElementById('sobrePreviewWrap').classList.add('visivel');
+            }
+        } catch (err) {
+            console.error('Erro ao carregar sobre:', err);
+        }
+    }
+
+    // ══════════════════════════════════════════════════════════
+    //  SOBRE — compressão da foto
+    // ══════════════════════════════════════════════════════════
+    let sobreFotoBase64 = '';
+
+    document.getElementById('sobreFotoInput').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+            const img = new Image();
+            img.src = ev.target.result;
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                let w = img.width, h = img.height;
+                const max = 700; // um pouco maior para foto de pessoa
+                if (w > h && w > max) { h = Math.round(h * max / w); w = max; }
+                else if (h > max)     { w = Math.round(w * max / h); h = max; }
+                canvas.width = w; canvas.height = h;
+                canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                sobreFotoBase64 = canvas.toDataURL('image/jpeg', 0.75);
+
+                document.getElementById('sobrePreviewImg').src = sobreFotoBase64;
+                document.getElementById('sobrePreviewInfo').textContent =
+                    `Foto pronta (${((sobreFotoBase64.length * 3/4)/1024).toFixed(0)} KB)`;
+                document.getElementById('sobrePreviewWrap').classList.add('visivel');
+            };
+        };
+        reader.readAsDataURL(file);
+    });
+
+    // ══════════════════════════════════════════════════════════
+    //  SOBRE — salvar no Firebase
+    // ══════════════════════════════════════════════════════════
+    window.salvarSobre = async function() {
+        const btn = document.getElementById('btnSalvarSobre');
+        const feedEl = document.getElementById('feedbackSobre');
+
+        const titulo = document.getElementById('sobreTitulo').value.trim();
+        const texto  = document.getElementById('sobreTexto').value.trim();
+
+        if (!titulo && !texto && !sobreFotoBase64) {
+            feedEl.textContent = 'Preencha pelo menos um campo antes de salvar.';
+            feedEl.className = 'feedback erro';
+            setTimeout(() => { feedEl.className = 'feedback'; }, 4000);
+            return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = 'Salvando...';
+
+        try {
+            const { setDoc } = await import("https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js");
+
+            const dados = {};
+            if (titulo)         dados.titulo = titulo;
+            if (texto)          dados.texto  = texto;
+            if (sobreFotoBase64) dados.foto  = sobreFotoBase64;
+
+            // setDoc com merge: preserva campos que não foram alterados
+            await setDoc(doc(db, "configuracoes", "sobre"), dados, { merge: true });
+
+            feedEl.textContent = '✓ Salvo! Já aparece no site das clientes.';
+            feedEl.className = 'feedback sucesso';
+            setTimeout(() => { feedEl.className = 'feedback'; }, 5000);
+
+        } catch (err) {
+            console.error(err);
+            feedEl.textContent = 'Erro ao salvar. Tente novamente.';
+            feedEl.className = 'feedback erro';
+            setTimeout(() => { feedEl.className = 'feedback'; }, 4000);
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Salvar na página';
+        }
+    };
 </script>
 
-</body>
-</html>
 </body>
 </html>
