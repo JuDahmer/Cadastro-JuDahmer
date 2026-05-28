@@ -3,354 +3,956 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ju Dahmer Ateliê | Painel Administrativo</title>
+    <title>Ju Dahmer Ateliê | Painel</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@200;300;400;500&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+
     <style>
         :root {
-            --verde-institucional: #879670;
-            --fundo-site: #FAF9F6;
-            --texto-principal: #2C3E2D;
-            --texto-secundario: #7A7A7A;
-            --detalhe-dourado: #D4AF37;
-            --vermelho-alerta: #d9534f;
-            --azul-edicao: #4A90E2;
+            --verde: #7f8a59;
+            --verde-escuro: #5a6340;
+            --fundo: #FAF9F6;
+            --texto: #2C2C2A;
+            --texto2: #5F5E5A;
+            --texto3: #888780;
+            --dourado: #D4AF37;
+            --borda: rgba(0,0,0,0.09);
+            --vermelho: #c0392b;
+            --azul: #2980b9;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            background-color: var(--fundo-site);
-            color: var(--texto-principal);
-            font-family: 'Montserrat', sans-serif;
+            background: var(--fundo);
+            color: var(--texto);
+            font-family: 'Jost', sans-serif;
+            min-height: 100vh;
+        }
+
+        /* ── TELA DE SENHA ── */
+        #telaLogin {
+            position: fixed;
+            inset: 0;
+            background: var(--verde);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
             padding: 20px;
         }
 
-        .main-wrapper {
-            max-width: 600px;
-            margin: 0 auto;
+        #telaLogin h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            color: white;
+            font-style: italic;
+            margin-bottom: 6px;
+        }
+
+        #telaLogin p {
+            font-size: 11px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 32px;
+        }
+
+        .login-box {
+            background: white;
+            border-radius: 6px;
+            padding: 32px 28px;
+            width: 100%;
+            max-width: 360px;
             display: flex;
             flex-direction: column;
-            gap: 30px;
+            gap: 14px;
         }
 
-        .admin-card {
+        .login-box label {
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--texto2);
+            font-weight: 500;
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--borda);
+            border-radius: 4px;
+            font-family: 'Jost', sans-serif;
+            font-size: 15px;
+            color: var(--texto);
+            outline: none;
+            margin-top: 6px;
+            letter-spacing: 3px;
+        }
+
+        .login-box input:focus { border-color: var(--verde); }
+
+        .login-btn {
+            padding: 13px;
+            background: var(--verde);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-family: 'Jost', sans-serif;
+            font-size: 11px;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 4px;
+        }
+
+        .login-btn:hover { background: var(--verde-escuro); }
+
+        .login-erro {
+            font-size: 13px;
+            color: var(--vermelho);
+            text-align: center;
+            display: none;
+        }
+
+        /* ── PAINEL PRINCIPAL ── */
+        #painelPrincipal { display: none; }
+
+        header {
             background: white;
-            padding: 30px 20px;
-            border-radius: 8px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.05);
-            border: 1px solid rgba(0,0,0,0.02);
+            border-bottom: 1px solid var(--borda);
+            padding: 18px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
-        .header-admin { text-align: center; margin-bottom: 25px; }
-        .header-admin h1 { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: var(--verde-institucional); font-weight: 400; }
-        .divisor { width: 40px; height: 1px; background-color: var(--detalhe-dourado); margin: 10px auto; }
+        .header-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 16px;
+            font-style: italic;
+            color: var(--texto);
+        }
 
-        .form-group { margin-bottom: 15px; }
-        label { display: block; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--texto-secundario); margin-bottom: 5px; font-weight: 500; }
-        input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-family: 'Montserrat', sans-serif; font-size: 1rem; color: var(--texto-principal); }
-        input:focus { outline: none; border-color: var(--verde-institucional); }
-        
-        .btn { width: 100%; color: white; border: none; padding: 15px; font-size: 0.9rem; letter-spacing: 1px; text-transform: uppercase; border-radius: 4px; cursor: pointer; transition: all 0.3s ease; font-weight: 500; margin-top: 10px; }
-        .btn-submit { background-color: var(--verde-institucional); }
-        .btn-submit:hover { background-color: #6d7a59; }
-        .btn-cancelar { background-color: var(--texto-secundario); display: none; margin-top: 10px;}
-        .btn-cancelar:hover { background-color: #555; }
-        .btn:disabled { background-color: #ccc; cursor: not-allowed; }
+        .header-badge {
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--texto3);
+        }
 
-        .preview-box { display: none; text-align: center; margin-top: 15px; padding: 15px; background-color: #f8f8f8; border: 1px dashed #ccc; border-radius: 8px; }
-        .preview-box.visible { display: block; }
-        .preview-box img { max-width: 100px; border-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 10px;}
-        
-        #feedback { margin-top: 15px; text-align: center; font-size: 0.85rem; display: none; padding: 10px; border-radius: 4px; }
+        .btn-sair {
+            font-size: 11px;
+            color: var(--texto3);
+            background: none;
+            border: 1px solid var(--borda);
+            border-radius: 4px;
+            padding: 7px 14px;
+            cursor: pointer;
+            font-family: 'Jost', sans-serif;
+            letter-spacing: 1px;
+            transition: all 0.2s;
+        }
 
-        /* LISTA DE PRODUTOS */
-        .produto-item { display: flex; align-items: center; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #eee; gap: 10px;}
+        .btn-sair:hover { color: var(--vermelho); border-color: var(--vermelho); }
+
+        .wrapper {
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 36px 20px 80px;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+        }
+
+        /* ── CARDS ── */
+        .card {
+            background: white;
+            border-radius: 6px;
+            border: 1px solid var(--borda);
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 20px 24px 16px;
+            border-bottom: 1px solid var(--borda);
+        }
+
+        .card-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            font-weight: 400;
+            color: var(--verde);
+        }
+
+        .card-header p {
+            font-size: 12px;
+            color: var(--texto3);
+            margin-top: 4px;
+        }
+
+        .card-body { padding: 24px; }
+
+        /* ── FORMULÁRIO ── */
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+
+        .form-group.full { grid-column: 1 / -1; }
+
+        label {
+            font-size: 11px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--texto2);
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        input[type="file"],
+        textarea,
+        select {
+            padding: 11px 14px;
+            border: 1px solid var(--borda);
+            border-radius: 4px;
+            font-family: 'Jost', sans-serif;
+            font-size: 14px;
+            color: var(--texto);
+            background: var(--fundo);
+            outline: none;
+            transition: border-color 0.2s;
+            width: 100%;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus,
+        select:focus { border-color: var(--verde); background: white; }
+
+        textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
+
+        /* ── TOGGLES DESTAQUE / NOVO ── */
+        .toggles-row {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .toggle-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .toggle-item input[type="checkbox"] { display: none; }
+
+        .toggle-track {
+            width: 42px; height: 24px;
+            background: #ddd;
+            border-radius: 12px;
+            position: relative;
+            transition: background 0.2s;
+            flex-shrink: 0;
+        }
+
+        .toggle-thumb {
+            position: absolute;
+            top: 3px; left: 3px;
+            width: 18px; height: 18px;
+            border-radius: 50%;
+            background: white;
+            transition: transform 0.2s;
+        }
+
+        .toggle-item input:checked ~ .toggle-track { background: var(--verde); }
+        .toggle-item input:checked ~ .toggle-track .toggle-thumb { transform: translateX(18px); }
+
+        .toggle-label-text { font-size: 13px; color: var(--texto2); }
+
+        /* ── PREVIEW IMAGEM ── */
+        .preview-wrap {
+            display: none;
+            background: var(--fundo);
+            border: 1px dashed var(--borda);
+            border-radius: 6px;
+            padding: 16px;
+            text-align: center;
+            margin-top: 4px;
+        }
+
+        .preview-wrap.visivel { display: block; }
+
+        .preview-wrap img {
+            max-width: 120px;
+            max-height: 120px;
+            border-radius: 4px;
+            object-fit: cover;
+            margin-bottom: 8px;
+        }
+
+        .preview-info {
+            font-size: 12px;
+            color: var(--texto3);
+        }
+
+        /* ── BOTÕES DO FORM ── */
+        .form-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .btn-principal {
+            width: 100%;
+            padding: 14px;
+            background: var(--verde);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-family: 'Jost', sans-serif;
+            font-size: 11px;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-principal:hover { background: var(--verde-escuro); }
+        .btn-principal:disabled { background: #ccc; cursor: not-allowed; }
+
+        .btn-secundario {
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            color: var(--texto2);
+            border: 1px solid var(--borda);
+            border-radius: 4px;
+            font-family: 'Jost', sans-serif;
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: none;
+        }
+
+        .btn-secundario:hover { border-color: var(--texto2); color: var(--texto); }
+
+        /* ── FEEDBACK ── */
+        .feedback {
+            padding: 12px 16px;
+            border-radius: 4px;
+            font-size: 13px;
+            text-align: center;
+            display: none;
+            margin-top: 4px;
+        }
+
+        .feedback.sucesso { background: #edf7ed; color: #2d6a2d; display: block; }
+        .feedback.erro    { background: #fdecea; color: var(--vermelho); display: block; }
+
+        /* ── LISTA DE PRODUTOS ── */
+        .produto-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--borda);
+        }
+
         .produto-item:last-child { border-bottom: none; }
-        .produto-info { display: flex; align-items: center; gap: 15px; flex: 1;}
-        .produto-info img { width: 50px; height: 50px; object-fit: cover; border-radius: 4px; border: 1px solid #eee;}
-        .produto-texto h3 { font-size: 1rem; font-weight: 500; margin-bottom: 2px;}
-        .produto-texto p { font-size: 0.85rem; color: var(--texto-secundario); }
-        
-        .acoes { display: flex; gap: 8px; }
-        .btn-acao { border: none; padding: 8px 12px; border-radius: 4px; color: white; cursor: pointer; font-size: 0.8rem; font-weight: 500; transition: all 0.2s;}
-        .btn-editar { background-color: var(--azul-edicao); }
-        .btn-excluir { background-color: var(--vermelho-alerta); }
-        
-        /* Ajustes para Celulares Pequenos */
-        @media (max-width: 480px) {
-            .produto-item { flex-direction: column; align-items: flex-start; }
-            .acoes { width: 100%; margin-top: 10px; }
-            .btn-acao { flex: 1; text-align: center; padding: 12px; } /* Botões maiores para toque */
+
+        .produto-thumb {
+            width: 56px; height: 56px;
+            border-radius: 4px;
+            object-fit: cover;
+            flex-shrink: 0;
+            border: 1px solid var(--borda);
+            background: var(--fundo);
+        }
+
+        .produto-info { flex: 1; min-width: 0; }
+
+        .produto-nome {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--texto);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .produto-meta {
+            font-size: 12px;
+            color: var(--texto3);
+            margin-top: 3px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .tag {
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .tag-destaque { background: #fef3cd; color: #7a5900; }
+        .tag-novo     { background: #d4edda; color: #1a5c2a; }
+
+        .produto-acoes {
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .btn-acao {
+            padding: 8px 14px;
+            border: none;
+            border-radius: 4px;
+            font-family: 'Jost', sans-serif;
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            color: white;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-acao:hover { opacity: 0.85; }
+        .btn-editar  { background: var(--azul); }
+        .btn-excluir { background: var(--vermelho); }
+
+        .lista-vazia {
+            text-align: center;
+            color: var(--texto3);
+            padding: 40px 0;
+            font-size: 14px;
+        }
+
+        /* ── ABAS DE NAVEGAÇÃO ── */
+        .abas {
+            display: flex;
+            gap: 0;
+            border-bottom: 1px solid var(--borda);
+            background: white;
+            padding: 0 32px;
+        }
+
+        .aba {
+            padding: 14px 20px;
+            font-size: 12px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--texto3);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -1px;
+            font-weight: 500;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .aba:hover { color: var(--verde); }
+
+        .aba.ativa {
+            color: var(--verde);
+            border-bottom-color: var(--verde);
+        }
+
+        .secao { display: none; }
+        .secao.ativa { display: block; }
+
+        /* ── SOBRE: preview da foto ── */
+        .sobre-preview-wrap {
+            display: none;
+            background: var(--fundo);
+            border: 1px dashed var(--borda);
+            border-radius: 6px;
+            padding: 16px;
+            text-align: center;
+            margin-top: 8px;
+        }
+
+        .sobre-preview-wrap.visivel { display: block; }
+
+        .sobre-preview-wrap img {
+            max-width: 140px;
+            max-height: 180px;
+            border-radius: 4px;
+            object-fit: cover;
+            margin-bottom: 8px;
+        }
+
+        /* ── RESPONSIVO ── */
+        @media (max-width: 500px) {
+            header { padding: 14px 16px; }
+            .abas { padding: 0 12px; }
+            .aba { padding: 12px 14px; font-size: 11px; }
+            .wrapper { padding: 20px 12px 60px; }
+            .card-body { padding: 16px; }
+            .form-row { grid-template-columns: 1fr; }
+            .produto-item { flex-wrap: wrap; }
+            .produto-acoes { width: 100%; }
+            .btn-acao { flex: 1; text-align: center; padding: 11px; }
         }
     </style>
 </head>
 <body>
 
-    <div class="main-wrapper">
-        <!-- FORMULÁRIO DE CADASTRO/EDIÇÃO -->
-        <div class="admin-card">
-            <div class="header-admin">
-                <h1 id="tituloForm">Cadastrar Produto</h1>
-                <div class="divisor"></div>
-            </div>
+<!-- ══════════════════════════════════════════════════════════════
+     SENHA DE ACESSO
+     Para trocar a senha: mude o valor de SENHA_CORRETA abaixo.
+     Procure por: const SENHA_CORRETA = "juda2024"
+     e troque "juda2024" pela senha que quiser.
+══════════════════════════════════════════════════════════════ -->
 
-            <form id="formCadastro">
-                <div class="form-group">
-                    <label>Nome do Produto</label>
-                    <input type="text" id="nomeProduto" required>
-                </div>
+<!-- TELA DE LOGIN -->
+<div id="telaLogin">
+    <h1>Ju Dahmer · Ateliê</h1>
+    <p>Painel administrativo</p>
+    <div class="login-box">
+        <label>Senha de acesso</label>
+        <input type="password" id="inputSenha" placeholder="••••••••" autocomplete="current-password">
+        <button class="login-btn" onclick="verificarSenha()">Entrar</button>
+        <p class="login-erro" id="erroSenha">Senha incorreta. Tente novamente.</p>
+    </div>
+</div>
 
-                <div class="form-group">
-                    <label>Preço</label>
-                    <input type="text" id="precoProduto" placeholder="Ex: R$ 87,00" required>
-                </div>
+<!-- PAINEL PRINCIPAL (aparece após login) -->
+<div id="painelPrincipal">
 
-                <div class="form-group">
-                    <label id="labelImagem">Foto do Produto</label>
-                    <input type="file" id="imagemProduto" accept="image/*">
-                </div>
-
-                <div class="preview-box" id="previewContainer">
-                    <img id="previewImg" src="">
-                    <p style="font-size: 0.75rem; color: var(--texto-secundario);" id="txtFinal"></p>
-                </div>
-
-                <button type="submit" class="btn btn-submit" id="btnSubmit">Salvar no Catálogo</button>
-                <button type="button" class="btn btn-cancelar" id="btnCancelar">Cancelar Edição</button>
-                <div id="feedback"></div>
-            </form>
+    <header>
+        <div>
+            <div class="header-logo">Ju Dahmer · Ateliê</div>
+            <div class="header-badge">Painel administrativo</div>
         </div>
+        <button class="btn-sair" onclick="sair()">Sair</button>
+    </header>
 
-        <!-- LISTAGEM DE PRODUTOS PARA EDIÇÃO/EXCLUSÃO -->
-        <div class="admin-card">
-            <div class="header-admin">
-                <h1>Produtos Cadastrados</h1>
-                <div class="divisor"></div>
-            </div>
-            <div id="listaProdutos">
-                <p style="text-align: center; color: var(--texto-secundario); font-size: 0.9rem;">Carregando...</p>
-            </div>
-        </div>
+    <!-- ABAS -->
+    <div class="abas">
+        <div class="aba ativa" onclick="trocarAba('catalogo')">🛍 Catálogo</div>
+        <div class="aba" onclick="trocarAba('sobre')">👩 Sobre mim</div>
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+    <div class="wrapper">
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyAA-4XzE079j_fE86vYz8Fy5m9CaOfuxLo",
-            authDomain: "ju-dahmer-atelie.firebaseapp.com",
-            projectId: "ju-dahmer-atelie",
-            storageBucket: "ju-dahmer-atelie.firebasestorage.app",
-            messagingSenderId: "1041012492925",
-            appId: "1:1041012492925:web:776f980a6e4814d141ff14"
-        };
+        <!-- ════ ABA CATÁLOGO ════ -->
+        <div class="secao ativa" id="secao-catalogo">
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+        <!-- FORMULÁRIO -->
+        <div class="card">
+            <div class="card-header">
+                <h2 id="tituloForm">Cadastrar produto</h2>
+                <p id="subtituloForm">Preencha os campos e salve no catálogo</p>
+            </div>
+            <div class="card-body">
+                <form id="formCadastro">
 
-        // Variáveis de Controle de Estado
-        let imgBase64 = "";
-        let idProdutoEmEdicao = null; 
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Nome do colar</label>
+                            <input type="text" id="nomeProduto" placeholder="Ex: Colar Luna" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Preço</label>
+                            <input type="text" id="precoProduto" placeholder="Ex: R$ 87,00" required>
+                        </div>
+                    </div>
 
-        // Elementos da Tela
-        const form = document.getElementById('formCadastro');
-        const inputNome = document.getElementById('nomeProduto');
-        const inputPreco = document.getElementById('precoProduto');
-        const inputImagem = document.getElementById('imagemProduto');
-        const btnSubmit = document.getElementById('btnSubmit');
-        const btnCancelar = document.getElementById('btnCancelar');
-        const previewContainer = document.getElementById('previewContainer');
-        const previewImg = document.getElementById('previewImg');
-        const txtFinal = document.getElementById('txtFinal');
-        const listaProdutosDiv = document.getElementById('listaProdutos');
-        const feedback = document.getElementById('feedback');
+                    <!-- ▼ CATEGORIAS: adicione ou remova opções aqui ▼ -->
+                    <div class="form-group">
+                        <label>Categoria</label>
+                        <select id="categoriaProduto">
+                            <option value="">Sem categoria</option>
+                            <option value="Pedraria">Pedraria</option>
+                            <option value="Delicado">Delicado</option>
+                            <option value="Dourado">Dourado</option>
+                            <option value="Prata">Prata</option>
+                            <option value="Colorido">Colorido</option>
+                        </select>
+                    </div>
+                    <!-- ▲ FIM DAS CATEGORIAS ▲ -->
 
-        // COMPRESSÃO DA IMAGEM
-        inputImagem.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
+                    <div class="form-group">
+                        <label>Descrição (aparece no modal do site)</label>
+                        <textarea id="descricaoProduto" placeholder="Ex: Peça delicada em banho dourado com pedras naturais. Feita à mão, peça única."></textarea>
+                    </div>
 
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const img = new Image();
-                img.src = event.target.result;
-                img.onload = function() {
-                    const canvas = document.createElement('canvas');
-                    let w = img.width, h = img.height;
-                    const max = 600;
+                    <!-- TOGGLES DESTAQUE / NOVO -->
+                    <div class="toggles-row">
+                        <label class="toggle-item">
+                            <input type="checkbox" id="toggleDestaque">
+                            <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                            <span class="toggle-label-text">⭐ Marcar como destaque</span>
+                        </label>
+                        <label class="toggle-item">
+                            <input type="checkbox" id="toggleNovo">
+                            <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                            <span class="toggle-label-text">✨ Marcar como novo</span>
+                        </label>
+                    </div>
 
-                    if (w > h && w > max) { h *= max / w; w = max; } 
-                    else if (h > max) { w *= max / h; h = max; }
+                    <div class="form-group">
+                        <label id="labelImagem">Foto do produto</label>
+                        <input type="file" id="imagemProduto" accept="image/*">
+                        <div class="preview-wrap" id="previewWrap">
+                            <img id="previewImg" src="" alt="Preview">
+                            <p class="preview-info" id="previewInfo"></p>
+                        </div>
+                    </div>
 
-                    canvas.width = w; canvas.height = h;
-                    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                    <div class="form-actions">
+                        <button type="submit" class="btn-principal" id="btnSubmit">Salvar no catálogo</button>
+                        <button type="button" class="btn-secundario" id="btnCancelar">Cancelar edição</button>
+                    </div>
 
-                    imgBase64 = canvas.toDataURL('image/jpeg', 0.7);
-                    
-                    previewContainer.classList.add('visible');
-                    previewImg.src = imgBase64;
-                    txtFinal.innerText = `Nova imagem pronta (${((imgBase64.length * 3 / 4) / 1024).toFixed(1)} KB)`;
-                }
+                    <div class="feedback" id="feedback"></div>
+                </form>
+            </div>
+        </div>
+
+        <!-- LISTA DE PRODUTOS -->
+        <div class="card">
+            <div class="card-header">
+                <h2>Produtos cadastrados</h2>
+                <p>Clique em Editar para alterar ou Apagar para remover</p>
+            </div>
+            <div class="card-body" id="listaProdutos">
+                <div class="lista-vazia">Carregando...</div>
+            </div>
+        </div>
+
+        </div><!-- fim secao-catalogo -->
+
+        <!-- ════ ABA SOBRE ════ -->
+        <div class="secao" id="secao-sobre">
+        <div class="card">
+            <div class="card-header">
+                <h2>Seção "Sobre mim"</h2>
+                <p>O que você escrever aqui aparece no site para as clientes</p>
+            </div>
+            <div class="card-body">
+
+                <div class="form-group">
+                    <label>Título da seção</label>
+                    <input type="text" id="sobreTitulo" placeholder='Ex: Feito com as mãos, carregado de afeto'>
+                </div>
+
+                <div class="form-group">
+                    <label>Texto sobre você</label>
+                    <textarea id="sobreTexto" style="min-height: 140px;"
+                        placeholder="Conte sua história, de onde veio a paixão pelos colares, o que te inspira..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Sua foto</label>
+                    <input type="file" id="sobreFotoInput" accept="image/*">
+                    <div class="sobre-preview-wrap" id="sobrePreviewWrap">
+                        <img id="sobrePreviewImg" src="" alt="Sua foto">
+                        <p class="preview-info" id="sobrePreviewInfo"></p>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button class="btn-principal" id="btnSalvarSobre" onclick="salvarSobre()">
+                        Salvar na página
+                    </button>
+                </div>
+
+                <div class="feedback" id="feedbackSobre"></div>
+            </div>
+        </div>
+        </div><!-- fim secao-sobre -->
+
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp }     from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, doc,
+             updateDoc, deleteDoc, serverTimestamp, query, orderBy }
+             from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+    // ── Firebase (não altere) ──
+    const firebaseConfig = {
+        apiKey:            "AIzaSyAA-4XzE079j_fE86vYz8Fy5m9CaOfuxLo",
+        authDomain:        "ju-dahmer-atelie.firebaseapp.com",
+        projectId:         "ju-dahmer-atelie",
+        storageBucket:     "ju-dahmer-atelie.firebasestorage.app",
+        messagingSenderId: "1041012492925",
+        appId:             "1:1041012492925:web:776f980a6e4814d141ff14"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db  = getFirestore(app);
+
+    // ══════════════════════════════════════════════════════════
+    //  SENHA — troque "juda2024" pela senha que você quiser
+    // ══════════════════════════════════════════════════════════
+    const SENHA_CORRETA = "juda2024";
+
+    // ── Estado ──
+    let imgBase64 = "";
+    let idEmEdicao = null;
+
+    // ── Elementos ──
+    const form          = document.getElementById('formCadastro');
+    const inputNome     = document.getElementById('nomeProduto');
+    const inputPreco    = document.getElementById('precoProduto');
+    const inputCat      = document.getElementById('categoriaProduto');
+    const inputDesc     = document.getElementById('descricaoProduto');
+    const inputImg      = document.getElementById('imagemProduto');
+    const toggleDest    = document.getElementById('toggleDestaque');
+    const toggleNovo    = document.getElementById('toggleNovo');
+    const btnSubmit     = document.getElementById('btnSubmit');
+    const btnCancelar   = document.getElementById('btnCancelar');
+    const previewWrap   = document.getElementById('previewWrap');
+    const previewImg    = document.getElementById('previewImg');
+    const previewInfo   = document.getElementById('previewInfo');
+    const feedbackDiv   = document.getElementById('feedback');
+    const listaDiv      = document.getElementById('listaProdutos');
+
+    // ── Login ──
+    window.verificarSenha = function() {
+        const val = document.getElementById('inputSenha').value;
+        if (val === SENHA_CORRETA) {
+            document.getElementById('telaLogin').style.display = 'none';
+            document.getElementById('painelPrincipal').style.display = 'block';
+            carregarLista();
+        } else {
+            document.getElementById('erroSenha').style.display = 'block';
+            document.getElementById('inputSenha').value = '';
+        }
+    };
+
+    // Enter para confirmar senha
+    document.getElementById('inputSenha').addEventListener('keydown', e => {
+        if (e.key === 'Enter') window.verificarSenha();
+    });
+
+    window.sair = function() {
+        document.getElementById('painelPrincipal').style.display = 'none';
+        document.getElementById('telaLogin').style.display = 'flex';
+        document.getElementById('inputSenha').value = '';
+        resetar();
+    };
+
+    // ── Compressão de imagem ──
+    inputImg.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+            const img = new Image();
+            img.src = ev.target.result;
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                let w = img.width, h = img.height;
+                const max = 600;
+                if (w > h && w > max) { h = Math.round(h * max / w); w = max; }
+                else if (h > max)     { w = Math.round(w * max / h); h = max; }
+                canvas.width = w; canvas.height = h;
+                canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                imgBase64 = canvas.toDataURL('image/jpeg', 0.7);
+
+                previewImg.src = imgBase64;
+                previewInfo.textContent = `Foto pronta (${((imgBase64.length * 3/4)/1024).toFixed(0)} KB)`;
+                previewWrap.classList.add('visivel');
             };
-            reader.readAsDataURL(file);
-        });
+        };
+        reader.readAsDataURL(file);
+    });
 
-        // SALVAR OU ATUALIZAR PRODUTO NO FIREBASE
-        form.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            // Validação: Se é cadastro novo, a foto é obrigatória
-            if(!idProdutoEmEdicao && !imgBase64) {
-                mostrarFeedback("Por favor, adicione uma foto.", false);
+    // ── Salvar / Atualizar ──
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        if (!idEmEdicao && !imgBase64) {
+            mostrarFeedback("Adicione uma foto antes de salvar.", false);
+            return;
+        }
+
+        btnSubmit.disabled = true;
+        btnSubmit.textContent = "Salvando...";
+
+        try {
+            const dados = {
+                nome:      inputNome.value.trim(),
+                preco:     inputPreco.value.trim(),
+                categoria: inputCat.value || null,
+                descricao: inputDesc.value.trim() || null,
+                destaque:  toggleDest.checked,
+                novo:      toggleNovo.checked,
+            };
+
+            if (idEmEdicao) {
+                if (imgBase64) dados.imagem = imgBase64;
+                await updateDoc(doc(db, "catalogo", idEmEdicao), dados);
+                mostrarFeedback("Produto atualizado!", true);
+            } else {
+                dados.imagem = imgBase64;
+                dados.dataCriacao = serverTimestamp();
+                await addDoc(collection(db, "catalogo"), dados);
+                mostrarFeedback("Produto cadastrado com sucesso!", true);
+            }
+
+            resetar();
+            carregarLista();
+
+        } catch (err) {
+            console.error(err);
+            mostrarFeedback("Erro ao salvar. Tente novamente.", false);
+        } finally {
+            btnSubmit.disabled = false;
+            btnSubmit.textContent = idEmEdicao ? "Salvar alterações" : "Salvar no catálogo";
+        }
+    });
+
+    // ── Carregar lista ──
+    async function carregarLista() {
+        listaDiv.innerHTML = '<div class="lista-vazia">Carregando...</div>';
+        try {
+            const q = query(collection(db, "catalogo"), orderBy("dataCriacao", "desc"));
+            const snap = await getDocs(q);
+
+            if (snap.empty) {
+                listaDiv.innerHTML = '<div class="lista-vazia">Nenhum produto cadastrado ainda.</div>';
                 return;
             }
 
-            btnSubmit.disabled = true;
-            btnSubmit.innerText = "Processando...";
+            listaDiv.innerHTML = '';
+            snap.forEach(docSnap => {
+                const p = docSnap.data();
+                const id = docSnap.id;
 
-            try {
-                if (idProdutoEmEdicao) {
-                    // EDIÇÃO (UPDATE)
-                    const dadosAtualizados = {
-                        nome: inputNome.value,
-                        preco: inputPreco.value,
-                    };
-                    // Só atualiza a imagem no banco se o usuário escolheu uma nova
-                    if (imgBase64) { dadosAtualizados.imagem = imgBase64; }
+                const div = document.createElement('div');
+                div.className = 'produto-item';
 
-                    await updateDoc(doc(db, "catalogo", idProdutoEmEdicao), dadosAtualizados);
-                    mostrarFeedback("Produto atualizado com sucesso!", true);
-                    resetarFormulario();
-                } else {
-                    // NOVO CADASTRO (CREATE)
-                    await addDoc(collection(db, "catalogo"), {
-                        nome: inputNome.value,
-                        preco: inputPreco.value,
-                        imagem: imgBase64,
-                        dataCriacao: serverTimestamp()
-                    });
-                    mostrarFeedback("Produto cadastrado com sucesso!", true);
-                    resetarFormulario();
-                }
-                
-                // Recarrega a lista para mostrar a alteração
-                carregarListaProdutos();
+                const tags = [
+                    p.destaque ? '<span class="tag tag-destaque">⭐ Destaque</span>' : '',
+                    p.novo     ? '<span class="tag tag-novo">✨ Novo</span>'         : '',
+                    p.categoria ? `<span style="font-size:12px;color:var(--texto3)">${p.categoria}</span>` : ''
+                ].filter(Boolean).join('');
 
-            } catch (error) {
-                mostrarFeedback("Erro de comunicação com o servidor.", false);
-            } finally {
-                btnSubmit.disabled = false;
-            }
-        });
-
-        // CARREGAR A LISTA NA TELA
-        async function carregarListaProdutos() {
-            try {
-                listaProdutosDiv.innerHTML = '<p style="text-align:center;">Atualizando lista...</p>';
-                const q = query(collection(db, "catalogo"), orderBy("dataCriacao", "desc"));
-                const querySnapshot = await getDocs(q);
-                
-                listaProdutosDiv.innerHTML = ""; // Limpa a div
-
-                if (querySnapshot.empty) {
-                    listaProdutosDiv.innerHTML = '<p style="text-align:center; font-size: 0.9rem;">Nenhum produto cadastrado.</p>';
-                    return;
-                }
-
-                querySnapshot.forEach((docSnap) => {
-                    const product = docSnap.data();
-                    const id = docSnap.id; // O ID gerado pelo Firebase
-
-                    // Cria o bloco do produto na lista
-                    const div = document.createElement('div');
-                    div.className = 'produto-item';
-                    div.innerHTML = `
-                        <div class="produto-info">
-                            <img src="${product.imagem}" alt="${product.nome}">
-                            <div class="produto-texto">
-                                <h3>${product.nome}</h3>
-                                <p>${product.preco}</p>
-                            </div>
+                div.innerHTML = `
+                    <img class="produto-thumb" src="${p.imagem}" alt="${p.nome}">
+                    <div class="produto-info">
+                        <div class="produto-nome">${p.nome}</div>
+                        <div class="produto-meta">
+                            <span>${p.preco}</span>
+                            ${tags}
                         </div>
-                        <div class="acoes">
-                            <button class="btn-acao btn-editar" onclick="prepararEdicao('${id}', '${product.nome}', '${product.preco}', '${product.imagem}')">Editar</button>
-                            <button class="btn-acao btn-excluir" onclick="excluirProduto('${id}', '${product.nome}')">Apagar</button>
-                        </div>
-                    `;
-                    listaProdutosDiv.appendChild(div);
-                });
-            } catch (error) {
-                listaProdutosDiv.innerHTML = '<p style="text-align:center; color:red;">Erro ao carregar os produtos.</p>';
-            }
+                    </div>
+                    <div class="produto-acoes">
+                        <button class="btn-acao btn-editar"  onclick="prepararEdicao('${id}')">Editar</button>
+                        <button class="btn-acao btn-excluir" onclick="excluir('${id}', '${p.nome.replace(/'/g,"\\'")}')">Apagar</button>
+                    </div>
+                `;
+                listaDiv.appendChild(div);
+            });
+
+        } catch (err) {
+            listaDiv.innerHTML = '<div class="lista-vazia" style="color:var(--vermelho)">Erro ao carregar produtos.</div>';
+        }
+    }
+
+    // ── Preparar edição ──
+    // Guarda todos os dados localmente para preencher o formulário
+    const _cache = {};
+
+    window.prepararEdicao = async function(id) {
+        // Pega o produto direto da lista já carregada (re-lê do Firebase para garantir dados frescos)
+        const snap = await getDocs(query(collection(db, "catalogo"), orderBy("dataCriacao", "desc")));
+        let produto = null;
+        snap.forEach(d => { if (d.id === id) produto = { id: d.id, ...d.data() }; });
+        if (!produto) return;
+
+        idEmEdicao = id;
+
+        inputNome.value  = produto.nome  || '';
+        inputPreco.value = produto.preco || '';
+        inputCat.value   = produto.categoria || '';
+        inputDesc.value  = produto.descricao || '';
+        toggleDest.checked = !!produto.destaque;
+        toggleNovo.checked  = !!produto.novo;
+
+        if (produto.imagem) {
+            previewImg.src = produto.imagem;
+            previewInfo.textContent = 'Imagem atual — selecione outra para trocar';
+            previewWrap.classList.add('visivel');
         }
 
-        // FUNÇÕES GLOBAIS PARA OS BOTÕES ONCLICK
-        window.prepararEdicao = function(id, nome, preco, imagemSrc) {
-            idProdutoEmEdicao = id;
-            inputNome.value = nome;
-            inputPreco.value = preco;
-            
-            // Mostra a foto atual no preview
-            previewImg.src = imagemSrc;
-            previewContainer.classList.add('visible');
-            txtFinal.innerText = "Imagem atual do produto. Selecione outra caso queira trocar.";
-            
-            // Muda a interface para "Modo Edição"
-            document.getElementById('tituloForm').innerText = "Editando Produto";
-            btnSubmit.innerText = "Salvar Alterações";
-            btnCancelar.style.display = "block";
-            document.getElementById('labelImagem').innerText = "Foto do Produto (Opcional na edição)";
-            
-            // Rola a página para o topo (útil no celular)
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        };
+        document.getElementById('tituloForm').textContent    = 'Editando produto';
+        document.getElementById('subtituloForm').textContent = 'Altere o que precisar e salve';
+        document.getElementById('labelImagem').textContent   = 'Foto (deixe em branco para manter a atual)';
+        btnSubmit.textContent       = 'Salvar alterações';
+        btnCancelar.style.display   = 'block';
 
-        window.excluirProduto = async function(id, nome) {
-            const confirmacao = confirm(`Tem certeza que deseja apagar o "${nome}"? Esta ação não pode ser desfeita.`);
-            if (confirmacao) {
-                try {
-                    await deleteDoc(doc(db, "catalogo", id));
-                    mostrarFeedback("Produto excluído.", true);
-                    
-                    // Se excluiu o produto que estava sendo editado, limpa o formulário
-                    if(id === idProdutoEmEdicao) resetarFormulario();
-                    
-                    carregarListaProdutos();
-                } catch (error) {
-                    mostrarFeedback("Erro ao excluir.", false);
-                }
-            }
-        };
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
 
-        // FUNÇÕES AUXILIARES
-        function resetarFormulario() {
-            form.reset();
-            idProdutoEmEdicao = null;
-            imgBase64 = "";
-            previewContainer.classList.remove('visible');
-            
-            document.getElementById('tituloForm').innerText = "Cadastrar Produto";
-            btnSubmit.innerText = "Salvar no Catálogo";
-            btnCancelar.style.display = "none";
-            document.getElementById('labelImagem').innerText = "Foto do Produto";
+    // ── Excluir ──
+    window.excluir = async function(id, nome) {
+        if (!confirm(`Apagar "${nome}"? Isso não pode ser desfeito.`)) return;
+        try {
+            await deleteDoc(doc(db, "catalogo", id));
+            mostrarFeedback("Produto apagado.", true);
+            if (id === idEmEdicao) resetar();
+            carregarLista();
+        } catch {
+            mostrarFeedback("Erro ao apagar.", false);
         }
+    };
 
-        btnCancelar.addEventListener('click', resetarFormulario);
+    // ── Resetar formulário ──
+    function resetar() {
+        form.reset();
+        idEmEdicao = null;
+        imgBase64  = '';
+        previewWrap.classList.remove('visivel');
+        previewImg.src = '';
 
-        function mostrarFeedback(msg, sucesso) {
-            feedback.innerText = msg;
-            feedback.style.display = "block";
-            feedback.style.backgroundColor = sucesso ? "#eaf8ea" : "#ffeaea";
-            feedback.style.color = sucesso ? "#2C3E2D" : "#d9534f";
-            setTimeout(() => feedback.style.display = "none", 4000);
-        }
+        document.getElementById('tituloForm').textContent    = 'Cadastrar produto';
+        document.getElementById('subtituloForm').textContent = 'Preencha os campos e salve no catálogo';
+        document.getElementById('labelImagem').textContent   = 'Foto do produto';
+        btnSubmit.textContent     = 'Salvar no catálogo';
+        btnCancelar.style.display = 'none';
+        btnSubmit.disabled        = false;
+    }
 
-        // Inicia carregando os produtos na tela
-        window.onload = carregarListaProdutos;
-    </script>
+    btnCancelar.addEventListener('click', resetar);
+
+    // ── Feedback ──
+    function mostrarFeedback(msg, ok) {
+        feedbackDiv.textContent  = msg;
+        feedbackDiv.className    = 'feedback ' + (ok ? 'sucesso' : 'erro');
+        setTimeout(() => { feedbackDiv.className = 'feedback'; }, 4000);
+    }
+</script>
+
+</body>
+</html>
 </body>
 </html>
